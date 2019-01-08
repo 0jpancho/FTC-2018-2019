@@ -46,9 +46,9 @@ public class DepotVision extends LinearOpMode {
 
             if (goldPosition == SampleRandomizedPositions.LEFT){
 
-                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.BACKWARD);
+                driveTrain.moveByEncoder(13.5, 1, DriveTrain.Direction.BACKWARD);
 
-                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.moveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -59,7 +59,7 @@ public class DepotVision extends LinearOpMode {
             {
                 visionTelemetry();
 
-                driveTrain.encoderDrive(44,0.5, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.moveByEncoder(44,0.5, DriveTrain.Direction.STRAFE_LEFT);
 
                 driveTrain.setMarker(true);
 
@@ -67,13 +67,13 @@ public class DepotVision extends LinearOpMode {
 
                 driveTrain.setMarker(false);
 
-                driveTrain.encoderDrive(12, 0.5, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.moveByEncoder(12, 0.5, DriveTrain.Direction.STRAFE_LEFT);
 
-                driveTrain.encoderDrive(3,1, DriveTrain.Direction.STRAFE_RIGHT);
+                driveTrain.moveByEncoder(3,1, DriveTrain.Direction.STRAFE_RIGHT);
 
                 driveTrain.rotateLeftByGyro(2, 0.5 );
 
-                driveTrain.encoderDrive(84, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.moveByEncoder(84, 1, DriveTrain.Direction.FORWARD);
 
                 break;
             }
@@ -82,16 +82,16 @@ public class DepotVision extends LinearOpMode {
 
                 visionTelemetry();
 
-                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.moveByEncoder(13.5, 1, DriveTrain.Direction.FORWARD);
 
-                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.moveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 break;
             }
 
             else if (goldPosition == SampleRandomizedPositions.UNKNOWN) {
 
-                driveTrain.encoderDrive(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.moveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
             }

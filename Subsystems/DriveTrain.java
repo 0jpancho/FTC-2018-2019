@@ -12,10 +12,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.util.Constants;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class DriveTrain {
+
+    Constants constants;
 
     public double theta;
 
@@ -29,13 +33,6 @@ public class DriveTrain {
     public static double BACKWARD = 1;
     public static double STRAFE_LEFT = 2;
     public static double STRAFE_RIGHT = 3;
-    
-    public final double wheelDiameter = 4;
-
-    public final double ppr = 1120;
-    public final double wheelCircumference = wheelDiameter * Math.PI;
-
-    public final double countsPerInch = ppr / wheelCircumference;
 
     public DcMotor frontLeft, frontRight, backLeft, backRight;
 
@@ -52,6 +49,7 @@ public class DriveTrain {
     public static double RUN_TO_POSITION = 1;
     public static double RUN_WITHOUT_ENCODER = 2;
     public static double STOP_AND_RESET_ENCODER =3;
+
 
     BNO055IMU imu;
     Orientation angles;
@@ -123,10 +121,31 @@ public class DriveTrain {
         l.idle();
     }
 
+    public void testMecanumTeleop(){
+        double FrontLeftVal =  l.gamepad1.left_stick_y - (l.gamepad1.left_stick_x)  + -l.gamepad1.right_stick_x;
+        double FrontRightVal =  l.gamepad1.left_stick_y  + (l.gamepad1.left_stick_x) - -l.gamepad1.right_stick_x;
+        double BackLeftVal = l.gamepad1.left_stick_y  + (l.gamepad1.left_stick_x)  + -l.gamepad1.right_stick_x;
+        double BackRightVal = l.gamepad1.left_stick_y - (l.gamepad1.left_stick_x) - -l.gamepad1.right_stick_x;
+
+        //Move range to between 0 and +1, if not already
+        double[] wheelPowers = {FrontRightVal, FrontLeftVal, BackLeftVal, BackRightVal};
+        Arrays.sort(wheelPowers);
+        if (wheelPowers[3] > 1) {
+            FrontLeftVal /= wheelPowers[3];
+            FrontRightVal /= wheelPowers[3];
+            BackLeftVal /= wheelPowers[3];
+            BackRightVal /= wheelPowers[3];
+        }
+        frontLeft.setPower(FrontLeftVal);
+        frontRight.setPower(FrontRightVal);
+        backLeft.setPower(BackLeftVal);
+        backRight.setPower(BackRightVal);
+    }
+
     public void simpleMecanumTeleop(double inputX, double inputY) {
 
         setBreakMode(false);
-        setMotorRunMode(RUN_WITHOUT_ENCODER);
+        setMotorRunMode(RUN_USING_ENCODER);
 
         if (l.gamepad1.left_stick_y < 0){
 
@@ -283,7 +302,7 @@ public class DriveTrain {
         }
     }
 
-    public void encoderDrive(double inches, double power, Direction direction){
+    public void moveByEncoder(double inches, double power, Direction direction){
 
         int newFrontLeftTarget;
         int newBackLeftTarget;
@@ -297,11 +316,11 @@ public class DriveTrain {
 
         if (direction == Direction.FORWARD) {
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int)(inches * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() - (int)(inches * countsPerInch);
+            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int)(inches * constants.countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() - (int)(inches * constants.countsPerInch);
 
-            newFrontRightTarget = frontRight.getCurrentPosition() + (int)(inches * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() + (int)(inches * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() + (int)(inches * constants.countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() + (int)(inches * constants.countsPerInch);
 
             frontLeft.setPower(-power);
             backLeft.setPower(-power);
@@ -334,11 +353,11 @@ public class DriveTrain {
 
         else if (direction == Direction.BACKWARD){
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int)(inches * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() + (int)(inches * countsPerInch);
+            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int)(inches * constants.countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() + (int)(inches * constants.countsPerInch);
 
-            newFrontRightTarget = frontRight.getCurrentPosition() - (int)(inches * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() - (int)(inches * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() - (int)(inches * constants.countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() - (int)(inches * constants.countsPerInch);
 
             frontLeft.setPower(power);
             backLeft.setPower(power);
@@ -371,11 +390,11 @@ public class DriveTrain {
 
         else if (direction == Direction.STRAFE_LEFT){
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
+            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
 
-            newFrontRightTarget = frontRight.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
 
             frontLeft.setPower(power);
             backLeft.setPower(-power);
@@ -408,11 +427,11 @@ public class DriveTrain {
 
         else if (direction == Direction.STRAFE_RIGHT){
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
+            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
 
-            newFrontRightTarget = frontRight.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * constants.countsPerInch);
 
             frontLeft.setPower(-power);
             backLeft.setPower(power);
@@ -631,32 +650,5 @@ public class DriveTrain {
         else{
             marker.setPosition(0.5);
         }
-    }
-
-    public double getRed(){
-        return colorSensor.red();
-    }
-
-    public double getGreen(){
-        return colorSensor.green();
-    }
-
-    public double getBlue(){
-        return colorSensor.blue();
-    }
-
-    public boolean goldMineralDetected(){
-
-        boolean isGold = false;
-
-        if (getRed() > 100 && getGreen() > 100 && getBlue() > 100){
-            isGold = false;
-        }
-
-        else if (getBlue() < 100){
-            isGold = true;
-        }
-
-        return isGold;
     }
 }
