@@ -22,7 +22,7 @@ public class Arm {
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void teleopControl(double inputY){
+    public void moveByJoystick(double inputY){
 
         if (-inputY == 0){
 
@@ -32,7 +32,7 @@ public class Arm {
         }
 
         else {
-            arm.setPower(-inputY);
+            arm.setPower(-inputY * .25);
         }
     }
 }

@@ -35,9 +35,10 @@ public class DepotVision extends LinearOpMode {
 
         waitForStart();
 
+        idle();
         goldPosition = vision.getTfLite().getLastKnownSampleOrder();
 
-        while(opModeIsActive()){
+        while(opModeIsActive() && !isStopRequested()){
             telemetry.addData("goldPosition was", goldPosition);// giving feedback
 
             vision.disable();
@@ -46,20 +47,22 @@ public class DepotVision extends LinearOpMode {
 
             if (goldPosition == SampleRandomizedPositions.LEFT){
 
-                driveTrain.moveByEncoder(13.5, 1, DriveTrain.Direction.BACKWARD);
+                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.BACKWARD);
 
-                driveTrain.moveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
                 break;
+
+
             }
 
             else if (goldPosition == SampleRandomizedPositions.CENTER)
             {
                 visionTelemetry();
 
-                driveTrain.moveByEncoder(44,0.5, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(44,0.5, DriveTrain.Direction.STRAFE_LEFT);
 
                 driveTrain.setMarker(true);
 
@@ -67,13 +70,13 @@ public class DepotVision extends LinearOpMode {
 
                 driveTrain.setMarker(false);
 
-                driveTrain.moveByEncoder(12, 0.5, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(12, 0.5, DriveTrain.Direction.STRAFE_LEFT);
 
-                driveTrain.moveByEncoder(3,1, DriveTrain.Direction.STRAFE_RIGHT);
+                driveTrain.encoderDrive(3,1, DriveTrain.Direction.STRAFE_RIGHT);
 
                 driveTrain.rotateLeftByGyro(2, 0.5 );
 
-                driveTrain.moveByEncoder(84, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.encoderDrive(84, 1, DriveTrain.Direction.FORWARD);
 
                 break;
             }
@@ -82,16 +85,16 @@ public class DepotVision extends LinearOpMode {
 
                 visionTelemetry();
 
-                driveTrain.moveByEncoder(13.5, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.FORWARD);
 
-                driveTrain.moveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 break;
             }
 
             else if (goldPosition == SampleRandomizedPositions.UNKNOWN) {
 
-                driveTrain.moveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(24, 1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
             }

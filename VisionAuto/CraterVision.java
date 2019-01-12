@@ -32,7 +32,7 @@ public class CraterVision extends LinearOpMode {
 
         goldPosition = vision.getTfLite().getLastKnownSampleOrder();
 
-        while(opModeIsActive()){
+        while(opModeIsActive() && !isStopRequested()){
             telemetry.addData("goldPosition was", goldPosition);// giving feedback
 
             vision.disable();
@@ -42,16 +42,16 @@ public class CraterVision extends LinearOpMode {
             hanger.moveByEncoder(24, 0.25, Hanger.DOWN);
 
             //Reposition from hook
-            driveTrain.moveByEncoder(6, 1, DriveTrain.Direction.BACKWARD);
-            driveTrain.moveByEncoder(6,1, DriveTrain.Direction.STRAFE_LEFT);
-            driveTrain.moveByEncoder(6, 1, DriveTrain.Direction.FORWARD);
+            driveTrain.encoderDrive(6, 1, DriveTrain.Direction.BACKWARD);
+            driveTrain.encoderDrive(6,1, DriveTrain.Direction.STRAFE_LEFT);
+            driveTrain.encoderDrive(6, 1, DriveTrain.Direction.FORWARD);
 
             visionTelemetry();
 
             if (goldPosition == SampleRandomizedPositions.LEFT){
 
-                driveTrain.moveByEncoder(13.5, 1, DriveTrain.Direction.BACKWARD);
-                driveTrain.moveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.BACKWARD);
+                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -62,13 +62,13 @@ public class CraterVision extends LinearOpMode {
             {
                 visionTelemetry();
 
-                driveTrain.moveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(24, 1, DriveTrain.Direction.STRAFE_LEFT);
                 break;
             }
 
             else if (goldPosition == SampleRandomizedPositions.RIGHT) {
-                driveTrain.moveByEncoder(13.5, 1, DriveTrain.Direction.FORWARD);
-                driveTrain.moveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -77,7 +77,7 @@ public class CraterVision extends LinearOpMode {
 
             else if (goldPosition == SampleRandomizedPositions.UNKNOWN) {
 
-                driveTrain.moveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.encoderDrive(24, 1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
             }

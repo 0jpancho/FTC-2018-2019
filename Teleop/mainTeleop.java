@@ -23,11 +23,9 @@ public class mainTeleop extends LinearOpMode {
             waitForStart();
 
             while (opModeIsActive()) {
-
-                driveTrain.testMecanumTeleop();
-                //driveTrain.simpleMecanumTeleop(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-                //driveTrain.simpleRotate(gamepad1.right_stick_x);
-                arm.teleopControl(gamepad2.left_stick_y);
+                driveTrain.simpleMecanumTeleop(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+                driveTrain.simpleRotate(gamepad1.right_stick_x);
+                arm.moveByJoystick(gamepad2.left_stick_y);
             }
         }
 
