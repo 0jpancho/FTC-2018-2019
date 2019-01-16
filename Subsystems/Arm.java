@@ -24,15 +24,14 @@ public class Arm {
 
     public void moveByJoystick(double inputY){
 
-        if (-inputY == 0){
+//        final int lastPos = arm.getCurrentPosition();
 
-            arm.setTargetPosition(arm.getCurrentPosition());
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(0.1);
-        }
+            arm.setTargetPosition((int)(inputY / 5040) - 5040);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.1);
 
-        else {
-            arm.setPower(-inputY * .25);
-        }
+   //     else {
+   //         arm.setPower(-inputY * .25);
+        //}
     }
 }

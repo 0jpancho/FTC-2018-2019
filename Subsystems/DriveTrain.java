@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class DriveTrain {
@@ -32,7 +33,7 @@ public class DriveTrain {
     public static double BACKWARD = 1;
     public static double STRAFE_LEFT = 2;
     public static double STRAFE_RIGHT = 3;
-    
+
     public final double wheelDiameter = 4;
 
     public final double ppr = 1120;
@@ -41,8 +42,6 @@ public class DriveTrain {
     public final double countsPerInch = ppr / wheelCircumference;
 
     public DcMotor frontLeft, frontRight, backLeft, backRight;
-
-    public ColorSensor colorSensor;
 
     public Servo marker;
 
@@ -54,7 +53,7 @@ public class DriveTrain {
     public static double RUN_USING_ENCODER = 0;
     public static double RUN_TO_POSITION = 1;
     public static double RUN_WITHOUT_ENCODER = 2;
-    public static double STOP_AND_RESET_ENCODER =3;
+    public static double STOP_AND_RESET_ENCODER = 3;
 
     BNO055IMU imu;
     Orientation angles;
@@ -68,7 +67,6 @@ public class DriveTrain {
 
     private static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
-
 
 
     public DriveTrain(LinearOpMode Input, HardwareMap hardwareMap, Telemetry telemetry) {
@@ -88,36 +86,11 @@ public class DriveTrain {
 
         MOTOR_CONFIG.getTicksPerRev();
 
-
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
-
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-
-        byte AXIS_MAP_CONFIG_BYTE = 0x6; //This is what to write to the AXIS_MAP_CONFIG register to swap x and z axes
-        byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
-
-        //Need to be in CONFIG mode to write to registers
-        imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
-
-        l.sleep(100); //Changing modes requires a delay before doing anything else
-
-        //Write to the AXIS_MAP_CONFIG register
-        imu.write8(BNO055IMU.Register.AXIS_MAP_CONFIG,AXIS_MAP_CONFIG_BYTE & 0x0F);
-
-        //Write to the AXIS_MAP_SIGN register
-        imu.write8(BNO055IMU.Register.AXIS_MAP_SIGN,AXIS_MAP_SIGN_BYTE & 0x0F);
-
-        //Need to change back into the IMU mode to use the gyro
-        imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.IMU.bVal & 0x0F);
-
-        l.sleep(100); //Changing modes again requires a delay
-
-
-        //angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
@@ -133,12 +106,12 @@ public class DriveTrain {
         l.idle();
     }
 
-    public void simpleMecanumTeleop(double inputX, double inputY) {
+    public void simpleMecanumTeleop(double leftInputX, double rightInputX, double inputY) {
 
         setBreakMode(false);
         setMotorRunMode(RUN_USING_ENCODER);
 
-        if (l.gamepad1.left_stick_y < 0){
+        if (l.gamepad1.left_stick_y < 0) {
 
             frontLeft.setPower(-inputY);
             backLeft.setPower(-inputY);
@@ -146,33 +119,43 @@ public class DriveTrain {
             frontRight.setPower(inputY);
             backRight.setPower(inputY);
 
-        }
-
-        else if (l.gamepad1.left_stick_y > 0) {
+        } else if (l.gamepad1.left_stick_y > 0) {
 
             frontLeft.setPower(-inputY);
             backLeft.setPower(-inputY);
 
             frontRight.setPower(inputY);
             backRight.setPower(inputY);
+        } else if (l.gamepad1.left_stick_x < 0) {
+
+            frontLeft.setPower(-leftInputX);
+            backLeft.setPower(leftInputX);
+
+            frontRight.setPower(-leftInputX);
+            backRight.setPower(leftInputX);
+        } else if (l.gamepad1.left_stick_x > 0) {
+
+            frontLeft.setPower(-leftInputX);
+            backLeft.setPower(leftInputX);
+
+            frontRight.setPower(-leftInputX);
+            backRight.setPower(leftInputX);
         }
 
-        else if (l.gamepad1.left_stick_x < 0){
+        else if (l.gamepad1.right_stick_x < 0) {
+            frontLeft.setPower(-rightInputX);
+            frontRight.setPower(-rightInputX);
 
-            frontLeft.setPower(-inputX);
-            backLeft.setPower(inputX);
-
-            frontRight.setPower(-inputX);
-            backRight.setPower(inputX);
+            backRight.setPower(-rightInputX);
+            backLeft.setPower(-rightInputX);
         }
 
-        else if (l.gamepad1.left_stick_x > 0){
+        else if (l.gamepad1.right_stick_x > 0) {
+            frontLeft.setPower(-rightInputX);
+            frontRight.setPower(-rightInputX);
 
-            frontLeft.setPower(-inputX);
-            backLeft.setPower(inputX);
-
-            frontRight.setPower(-inputX);
-            backRight.setPower(inputX);
+            backRight.setPower(-rightInputX);
+            backLeft.setPower(-rightInputX);
         }
 
         else {
@@ -182,7 +165,7 @@ public class DriveTrain {
 
     public void simpleRotate(double inputX) {
 
-        setBreakMode(true);
+        setBreakMode(false);
 
         if (l.gamepad1.right_stick_x < 0) {
             frontLeft.setPower(-inputX);
@@ -190,9 +173,7 @@ public class DriveTrain {
 
             backRight.setPower(-inputX);
             backLeft.setPower(-inputX);
-        }
-
-        else if (l.gamepad1.right_stick_x > 0) {
+        } else if (l.gamepad1.right_stick_x > 0) {
             frontLeft.setPower(-inputX);
             frontRight.setPower(-inputX);
 
@@ -204,16 +185,15 @@ public class DriveTrain {
         realTelemetry.update();
     }
 
-    public void advMecanumTeleop(double inputX, double inputY)
-    {
+    public void advMecanumTeleop(double inputX, double inputY) {
         x = inputX;
         y = inputY;
         r = Math.sqrt(x * x + y * y);
 
-        theta = (Math.atan2(y, x) * (180/Math.PI));
+        theta = (Math.atan2(y, x) * (180 / Math.PI));
 
-        vA = (Math.cos((theta - 45) * (Math.PI/180)) * r) * l.gamepad1.right_stick_y;
-        vB = (Math.cos((theta + 45) *  (Math.PI/180))* r) * l.gamepad1.right_stick_y;
+        vA = (Math.cos((theta - 45) * (Math.PI / 180)) * r) * l.gamepad1.right_stick_y;
+        vB = (Math.cos((theta + 45) * (Math.PI / 180)) * r) * l.gamepad1.right_stick_y;
         vC = -vA;
         vD = -vB;
 
@@ -236,11 +216,42 @@ public class DriveTrain {
         realTelemetry.update();
     }
 
-    public void simpleMove(double timeOne, double timeTwo, double power, double startTime, double direction){
+    public void testMecanumTeleop(double leftStickY, double leftStickX, double rightStickX) {
+
+        setMotorRunMode(RUN_USING_ENCODER);
+
+
+        double FrontLeftVal = leftStickY - (leftStickX) + -rightStickX;
+
+
+        double FrontRightVal = leftStickY + (leftStickX) - -rightStickX;
+        double BackLeftVal = leftStickY + (leftStickX) + -rightStickX;
+        double BackRightVal = leftStickY - (leftStickX) - -rightStickX ;
+
+        //Move range to between 0 and +1, if not already
+        double[] wheelPowers = {FrontRightVal, FrontLeftVal, BackLeftVal, BackRightVal};
+        Arrays.sort(wheelPowers);
+        if (wheelPowers[3] > 1) {
+            FrontLeftVal /= wheelPowers[3];
+            FrontRightVal /= wheelPowers[3];
+            BackLeftVal /= wheelPowers[3];
+            BackRightVal /= wheelPowers[3];
+        }
+        frontLeft.setPower(FrontLeftVal);
+        frontRight.setPower(-FrontRightVal);
+        backLeft.setPower(BackLeftVal);
+        backRight.setPower(-BackRightVal);
+
+        realTelemetry.addData("FrontLeftVal", FrontLeftVal);
+
+    }
+
+
+    public void simpleMove(double timeOne, double timeTwo, double power, double startTime, double direction) {
 
         setBreakMode(true);
 
-        if (direction == FORWARD){
+        if (direction == FORWARD) {
 
             while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
 
@@ -251,9 +262,7 @@ public class DriveTrain {
                 backRight.setPower(power);
             }
             stopMotors();
-        }
-
-        else if (direction == BACKWARD){
+        } else if (direction == BACKWARD) {
 
             while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
 
@@ -264,9 +273,7 @@ public class DriveTrain {
                 backRight.setPower(-power);
             }
             stopMotors();
-        }
-
-        else if (direction == STRAFE_LEFT){
+        } else if (direction == STRAFE_LEFT) {
 
             while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
 
@@ -277,9 +284,7 @@ public class DriveTrain {
                 backRight.setPower(-power);
             }
             stopMotors();
-        }
-
-        else if (direction == STRAFE_RIGHT){
+        } else if (direction == STRAFE_RIGHT) {
 
             while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
 
@@ -293,7 +298,7 @@ public class DriveTrain {
         }
     }
 
-    public void encoderDrive(double inches, double power, Direction direction){
+    public void encoderDrive(double inches, double power, Direction direction) {
 
         int newFrontLeftTarget;
         int newBackLeftTarget;
@@ -307,11 +312,11 @@ public class DriveTrain {
 
         if (direction == Direction.FORWARD) {
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int)(inches * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() - (int)(inches * countsPerInch);
+            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int) (inches * countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() - (int) (inches * countsPerInch);
 
-            newFrontRightTarget = frontRight.getCurrentPosition() + (int)(inches * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() + (int)(inches * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() + (int) (inches * countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() + (int) (inches * countsPerInch);
 
             frontLeft.setPower(-power);
             backLeft.setPower(-power);
@@ -340,15 +345,13 @@ public class DriveTrain {
             }
 
             setMotorRunMode(RUN_USING_ENCODER);
-        }
+        } else if (direction == Direction.BACKWARD) {
 
-        else if (direction == Direction.BACKWARD){
+            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int) (inches * countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() + (int) (inches * countsPerInch);
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int)(inches * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() + (int)(inches * countsPerInch);
-
-            newFrontRightTarget = frontRight.getCurrentPosition() - (int)(inches * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() - (int)(inches * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() - (int) (inches * countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() - (int) (inches * countsPerInch);
 
             frontLeft.setPower(power);
             backLeft.setPower(power);
@@ -377,15 +380,13 @@ public class DriveTrain {
             }
 
             setMotorRunMode(RUN_USING_ENCODER);
-        }
+        } else if (direction == Direction.STRAFE_LEFT) {
 
-        else if (direction == Direction.STRAFE_LEFT){
+            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() - (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-
-            newFrontRightTarget = frontRight.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() + (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() - (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
 
             frontLeft.setPower(power);
             backLeft.setPower(-power);
@@ -414,15 +415,13 @@ public class DriveTrain {
             }
 
             setMotorRunMode(RUN_USING_ENCODER);
-        }
+        } else if (direction == Direction.STRAFE_RIGHT) {
 
-        else if (direction == Direction.STRAFE_RIGHT){
+            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
+            newBackLeftTarget = backLeft.getCurrentPosition() + (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
 
-            newFrontLeftTarget = frontLeft.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackLeftTarget = backLeft.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-
-            newFrontRightTarget = frontRight.getCurrentPosition() - (int)((inches * encoderStrafeMultiplier) * countsPerInch);
-            newBackRightTarget = backRight.getCurrentPosition() + (int)((inches * encoderStrafeMultiplier) * countsPerInch);
+            newFrontRightTarget = frontRight.getCurrentPosition() - (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
+            newBackRightTarget = backRight.getCurrentPosition() + (int) ((inches * encoderStrafeMultiplier) * countsPerInch);
 
             frontLeft.setPower(-power);
             backLeft.setPower(power);
@@ -457,11 +456,11 @@ public class DriveTrain {
         l.sleep(500);
     }
 
-    public void timedRotate (double timeOne, double timeTwo, double power, double startTime, boolean left) {
+    public void timedRotate(double timeOne, double timeTwo, double power, double startTime, boolean left) {
 
         setMotorRunMode(RUN_WITHOUT_ENCODER);
 
-        if (left == true){
+        if (left == true) {
 
             while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
 
@@ -472,9 +471,7 @@ public class DriveTrain {
                 backRight.setPower(power);
             }
             stopMotors();
-        }
-
-        else {
+        } else {
 
             while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
 
@@ -488,19 +485,19 @@ public class DriveTrain {
         }
     }
 
-    public void rotateLeftByGyro(double inputAngle, double power){
+    public void rotateLeftByGyro(double inputAngle, double power) {
 
         setMotorRunMode(RUN_WITHOUT_ENCODER);
         setBreakMode(true);
 
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double currentAngle = angles.firstAngle;
         double targetAngle = currentAngle + inputAngle;
 
         //Left
         while (currentAngle < targetAngle) {
 
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             currentAngle = angles.firstAngle;
 
             frontLeft.setPower(power);
@@ -509,9 +506,9 @@ public class DriveTrain {
             frontRight.setPower(power);
             backRight.setPower(power);
 
-            realTelemetry.addData("Z Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
-            realTelemetry.addData("Y Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).secondAngle);
-            realTelemetry.addData("X Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).thirdAngle);
+            realTelemetry.addData("Z Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            realTelemetry.addData("Y Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
+            realTelemetry.addData("X Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle);
 
             realTelemetry.addData("Target Angle", inputAngle);
 
@@ -522,21 +519,21 @@ public class DriveTrain {
         l.sleep(500);
     }
 
-    public void rotateRightByGyro(double inputAngle, double power){
+    public void rotateRightByGyro(double inputAngle, double power) {
 
         inputAngle = -inputAngle;
 
         setMotorRunMode(RUN_WITHOUT_ENCODER);
         setBreakMode(true);
 
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double currentAngle = angles.firstAngle;
         double targetAngle = currentAngle + inputAngle;
 
         //Left
         while (currentAngle > targetAngle) {
 
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             currentAngle = angles.firstAngle;
 
             frontLeft.setPower(-power);
@@ -545,9 +542,9 @@ public class DriveTrain {
             frontRight.setPower(-power);
             backRight.setPower(-power);
 
-            realTelemetry.addData("Z Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
-            realTelemetry.addData("Y Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).secondAngle);
-            realTelemetry.addData("X Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).thirdAngle);
+            realTelemetry.addData("Z Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            realTelemetry.addData("Y Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
+            realTelemetry.addData("X Axis", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle);
 
             realTelemetry.addData("Target Angle", inputAngle);
 
@@ -558,43 +555,27 @@ public class DriveTrain {
         l.sleep(500);
     }
 
+    public void setMotorRunMode(double mode) {
 
-    public void detectRGB(){
-
-        realTelemetry.addData("Red  ", colorSensor.red());
-        realTelemetry.addData("Green", colorSensor.green());
-        realTelemetry.addData("Blue ", colorSensor.blue());
-
-        realTelemetry.update();
-    }
-
-    public void setMotorRunMode(double mode){
-
-        if (mode == RUN_TO_POSITION){
+        if (mode == RUN_TO_POSITION) {
             frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        else if (mode == RUN_USING_ENCODER) {
+        } else if (mode == RUN_USING_ENCODER) {
             frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        else if (mode == RUN_WITHOUT_ENCODER){
+        } else if (mode == RUN_WITHOUT_ENCODER) {
             frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-        else if (mode == STOP_AND_RESET_ENCODER){
+        } else if (mode == STOP_AND_RESET_ENCODER) {
             frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -603,17 +584,15 @@ public class DriveTrain {
         }
     }
 
-    public void setBreakMode(boolean enabled){
+    public void setBreakMode(boolean enabled) {
 
-        if (enabled == true){
+        if (enabled == true) {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-
-        else {
+        } else {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -622,7 +601,7 @@ public class DriveTrain {
         }
     }
 
-    public void stopMotors (){
+    public void stopMotors() {
 
         frontLeft.setPower(0);
         backLeft.setPower(0);
@@ -632,41 +611,12 @@ public class DriveTrain {
 
     }
 
-    public void setMarker(boolean enabled){
+    public void setMarker(boolean enabled) {
 
         if (enabled == false) {
             marker.setPosition(0);
-        }
-
-        else{
+        } else {
             marker.setPosition(0.5);
         }
-    }
-
-    public double getRed(){
-        return colorSensor.red();
-    }
-
-    public double getGreen(){
-        return colorSensor.green();
-    }
-
-    public double getBlue(){
-        return colorSensor.blue();
-    }
-
-    public boolean goldMineralDetected(){
-
-        boolean isGold = false;
-
-        if (getRed() > 100 && getGreen() > 100 && getBlue() > 100){
-            isGold = false;
-        }
-
-        else if (getBlue() < 100){
-            isGold = true;
-        }
-
-        return isGold;
     }
 }

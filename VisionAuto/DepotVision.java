@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Hanger;
 import org.firstinspires.ftc.teamcode.vision.MasterVision;
 import org.firstinspires.ftc.teamcode.vision.SampleRandomizedPositions;
 
-@Autonomous(name = "CraterVision")
+@Autonomous(name = "DepotVision")
 public class DepotVision extends LinearOpMode {
 
     MasterVision vision;

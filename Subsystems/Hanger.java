@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -32,10 +33,14 @@ public class Hanger {
     public static double UP = 0;
     public static double DOWN = 1;
 
+    public ElapsedTime timer;
+
     public Hanger(LinearOpMode Input, HardwareMap hardwareMap, Telemetry telemetry) {
 
         l = Input;
         realTelemetry = telemetry;
+
+        timer = new ElapsedTime(0);
 
         realTelemetry.setAutoClear(true);
 
@@ -93,6 +98,16 @@ public class Hanger {
         }
         hanger.setPower(0);
         setHangerRunMode(RUN_WITHOUT_ENCODER);
+    }
+
+    public void moveByTime(double time, double power, double direction){
+
+        timer.startTime();
+
+        if (direction == UP){
+
+        }
+
     }
     
     public void setHangerRunMode(double mode) {

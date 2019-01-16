@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.hardware.motors.NeveRest40Gearmotor;
+import com.qualcomm.hardware.motors.NeveRest60Gearmotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 public class Constants {
@@ -15,7 +16,7 @@ public class Constants {
     }
 
     public static final MotorConfigurationType NEV_40_MOTOR_CONFIG =
-            MotorConfigurationType.getMotorType(NeveRest40Gearmotor.class);
+            MotorConfigurationType.getMotorType(NeveRest60Gearmotor.class);
 
 
     public final double wheelDiameter = 4;
