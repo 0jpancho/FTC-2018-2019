@@ -14,7 +14,6 @@ public class Hanger {
     public LinearOpMode l;
     public Telemetry realTelemetry;
 
-    
     public double ppr = 28;
     public double gearboxRatio = 81;
     
@@ -47,8 +46,8 @@ public class Hanger {
         hanger = hardwareMap.dcMotor.get("hanger");
         hanger.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        setHangerRunMode(STOP_AND_RESET_ENCODER);
-        setHangerRunMode(RUN_TO_POSITION);
+        setRunMode(STOP_AND_RESET_ENCODER);
+        setRunMode(RUN_TO_POSITION);
 
         //realTelemetry.addData("Arm Status", "Lift Initialization");
         realTelemetry.update();
@@ -57,28 +56,49 @@ public class Hanger {
 
     public void moveHanger (double inputY, double multiplier){
     
-        setHangerRunMode(RUN_WITHOUT_ENCODER);
+        setRunMode(RUN_USING_ENCODER);
         
         hanger.setPower(-inputY * multiplier);
 
         realTelemetry.update();
     }
-    
+
+    public void moveByTimer(double power, double duration, double direction){
+        setRunMode(RUN_USING_ENCODER);
+
+        timer.reset();
+        if (direction == UP){
+            while(timer.seconds() < duration && l.opModeIsActive() && !l.isStopRequested()){
+                hanger.setPower(power);
+            }
+        }
+
+        else if (direction == DOWN){
+            while(timer.seconds() < duration && l.opModeIsActive() && !l.isStopRequested()){
+                hanger.setPower(-power);
+            }
+        }
+        hanger.setPower(0);
+    }
+
+
     public void moveByEncoder (double inches, double power, double direction){
     
     int newHangerTargetCounts;
     
-    setHangerRunMode(RUN_TO_POSITION);
+    setRunMode(RUN_TO_POSITION);
         
         if (direction == UP){
             
             newHangerTargetCounts = hanger.getCurrentPosition() + (int)(countsPerInch * inches);
                 
             hanger.setPower(-power);
-            
-            hanger.setTargetPosition(newHangerTargetCounts);
-            
-            while(l.opModeIsActive() && hanger.isBusy()){
+
+            while(l.opModeIsActive() && !l.isStopRequested()
+                    && hanger.getCurrentPosition() > -newHangerTargetCounts){
+
+                hanger.setPower(power);
+
                 realTelemetry.addData("Hanger Encoder Target", newHangerTargetCounts);
                 realTelemetry.addData("Hanger Counts", hanger.getCurrentPosition());
             }
@@ -86,31 +106,23 @@ public class Hanger {
         else if (direction == DOWN){
             
             newHangerTargetCounts = hanger.getCurrentPosition() - (int)(countsPerInch * inches);
-                
-            hanger.setPower(power);
+
+            hanger.setTargetPosition(newHangerTargetCounts );
             
-            hanger.setTargetPosition(newHangerTargetCounts);
-            
-            while(l.opModeIsActive() && hanger.isBusy()){
+            while(l.opModeIsActive() && !l.isStopRequested()
+                    && hanger.getCurrentPosition() < newHangerTargetCounts){
+
+                hanger.setPower(-power);
+
                 realTelemetry.addData("Hanger Encoder Target", newHangerTargetCounts);
                 realTelemetry.addData("Hanger Counts", hanger.getCurrentPosition());
             }
         }
         hanger.setPower(0);
-        setHangerRunMode(RUN_WITHOUT_ENCODER);
+        setRunMode(RUN_WITHOUT_ENCODER);
     }
 
-    public void moveByTime(double time, double power, double direction){
-
-        timer.startTime();
-
-        if (direction == UP){
-
-        }
-
-    }
-    
-    public void setHangerRunMode(double mode) {
+    public void setRunMode(double mode) {
 
         if (mode == RUN_TO_POSITION) {
             hanger.setMode(DcMotor.RunMode.RUN_TO_POSITION);

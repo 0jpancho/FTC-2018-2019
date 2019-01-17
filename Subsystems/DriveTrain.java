@@ -216,14 +216,11 @@ public class DriveTrain {
         realTelemetry.update();
     }
 
-    public void testMecanumTeleop(double leftStickY, double leftStickX, double rightStickX) {
+    public void mainMecanumDrive(double leftStickY, double leftStickX, double rightStickX) {
 
         setMotorRunMode(RUN_USING_ENCODER);
 
-
         double FrontLeftVal = leftStickY - (leftStickX) + -rightStickX;
-
-
         double FrontRightVal = leftStickY + (leftStickX) - -rightStickX;
         double BackLeftVal = leftStickY + (leftStickX) + -rightStickX;
         double BackRightVal = leftStickY - (leftStickX) - -rightStickX ;
