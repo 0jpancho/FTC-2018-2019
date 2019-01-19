@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.VisionAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Hanger;
 import org.firstinspires.ftc.teamcode.vision.MasterVision;
 import org.firstinspires.ftc.teamcode.vision.SampleRandomizedPositions;
 
+@Disabled
 @Autonomous(name = "CraterVision", group = "Main Autonomous")
 public class CraterVision extends LinearOpMode {
     MasterVision vision;
@@ -42,16 +44,16 @@ public class CraterVision extends LinearOpMode {
             hanger.moveByEncoder(24, 0.25, Hanger.DOWN);
 
             //Reposition from hook
-            driveTrain.encoderDrive(6, 1, DriveTrain.Direction.BACKWARD);
-            driveTrain.encoderDrive(6,1, DriveTrain.Direction.STRAFE_LEFT);
-            driveTrain.encoderDrive(6, 1, DriveTrain.Direction.FORWARD);
+            driveTrain.driveByEncoder(6, 1, DriveTrain.Direction.BACKWARD);
+            driveTrain.driveByEncoder(6,1, DriveTrain.Direction.STRAFE_LEFT);
+            driveTrain.driveByEncoder(6, 1, DriveTrain.Direction.FORWARD);
 
             visionTelemetry();
 
             if (goldPosition == SampleRandomizedPositions.LEFT){
 
-                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.BACKWARD);
-                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(13.5, 1, DriveTrain.Direction.BACKWARD);
+                driveTrain.driveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -62,13 +64,13 @@ public class CraterVision extends LinearOpMode {
             {
                 visionTelemetry();
 
-                driveTrain.encoderDrive(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
                 break;
             }
 
             else if (goldPosition == SampleRandomizedPositions.RIGHT) {
-                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.FORWARD);
-                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(13.5, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.driveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -77,7 +79,7 @@ public class CraterVision extends LinearOpMode {
 
             else if (goldPosition == SampleRandomizedPositions.UNKNOWN) {
 
-                driveTrain.encoderDrive(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
             }

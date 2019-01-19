@@ -39,7 +39,7 @@ public class Hanger {
         l = Input;
         realTelemetry = telemetry;
 
-        timer = new ElapsedTime(0);
+        timer = new ElapsedTime( );
 
         realTelemetry.setAutoClear(true);
 
@@ -70,12 +70,18 @@ public class Hanger {
         if (direction == UP){
             while(timer.seconds() < duration && l.opModeIsActive() && !l.isStopRequested()){
                 hanger.setPower(power);
+
+                realTelemetry.addData("Current Time", timer.seconds());
+                realTelemetry.addData("Target", duration);
             }
         }
 
         else if (direction == DOWN){
             while(timer.seconds() < duration && l.opModeIsActive() && !l.isStopRequested()){
                 hanger.setPower(-power);
+
+                realTelemetry.addData("Current Time", timer.seconds());
+                realTelemetry.addData("Target", duration);
             }
         }
         hanger.setPower(0);

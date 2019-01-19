@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.VisionAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Hanger;
 import org.firstinspires.ftc.teamcode.vision.MasterVision;
 import org.firstinspires.ftc.teamcode.vision.SampleRandomizedPositions;
 
+@Disabled
 @Autonomous(name = "DepotVision")
 public class DepotVision extends LinearOpMode {
 
@@ -47,9 +49,9 @@ public class DepotVision extends LinearOpMode {
 
             if (goldPosition == SampleRandomizedPositions.LEFT){
 
-                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.BACKWARD);
+                driveTrain.driveByEncoder(13.5, 1, DriveTrain.Direction.BACKWARD);
 
-                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -62,7 +64,7 @@ public class DepotVision extends LinearOpMode {
             {
                 visionTelemetry();
 
-                driveTrain.encoderDrive(44,0.5, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(44,0.5, DriveTrain.Direction.STRAFE_LEFT);
 
                 driveTrain.setMarker(true);
 
@@ -70,13 +72,13 @@ public class DepotVision extends LinearOpMode {
 
                 driveTrain.setMarker(false);
 
-                driveTrain.encoderDrive(12, 0.5, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(12, 0.5, DriveTrain.Direction.STRAFE_LEFT);
 
-                driveTrain.encoderDrive(3,1, DriveTrain.Direction.STRAFE_RIGHT);
+                driveTrain.driveByEncoder(3,1, DriveTrain.Direction.STRAFE_RIGHT);
 
                 driveTrain.rotateLeftByGyro(2, 0.5 );
 
-                driveTrain.encoderDrive(84, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.driveByEncoder(84, 1, DriveTrain.Direction.FORWARD);
 
                 break;
             }
@@ -85,16 +87,16 @@ public class DepotVision extends LinearOpMode {
 
                 visionTelemetry();
 
-                driveTrain.encoderDrive(13.5, 1, DriveTrain.Direction.FORWARD);
+                driveTrain.driveByEncoder(13.5, 1, DriveTrain.Direction.FORWARD);
 
-                driveTrain.encoderDrive(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 break;
             }
 
             else if (goldPosition == SampleRandomizedPositions.UNKNOWN) {
 
-                driveTrain.encoderDrive(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                driveTrain.driveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
             }

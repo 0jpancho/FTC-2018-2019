@@ -29,12 +29,8 @@ public class mainTeleop extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
 
                 driveTrain.mainMecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-                arm.moveByJoystick(gamepad2.left_stick_y, 0.5);
+                arm.PivotByJoystick(gamepad2.left_stick_y, 0.5);
                 hanger.moveHanger(gamepad2.right_stick_y, 0.675);
-
-                telemetry.addData("Left Stick Y", gamepad1.left_stick_y);
-                telemetry.addData("Left Stick X", gamepad1.left_stick_x);
-                telemetry.addData("Right Stick X", gamepad1.right_stick_x);
 
                 telemetry.update();
             }

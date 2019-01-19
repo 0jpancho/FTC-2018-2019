@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Arm {
+public class  Arm {
 
     public DcMotor armPivot, armExtend;
 
@@ -25,14 +25,12 @@ public class Arm {
         armPivot = hardwareMap.dcMotor.get("armPivot");
         armPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if(armPivot instanceof DcMotorEx){
-            armPivot = (DcMotorEx)armPivot;
-        }
+        armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveByJoystick(double inputY, double multiplier){
+    public void PivotByJoystick(double inputY, double multiplier){
 
-        armPivot.setPower(-inputY * multiplier);
+        armPivot.setPower(inputY * multiplier);
 
         /*
         final int lastPos = arm.getCurrentPosition();
@@ -41,5 +39,10 @@ public class Arm {
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.1);
          */
+    }
+
+    public void extendByJoystick(double inputY, double multiplier){
+
+        armExtend.setPower(inputY * multiplier);
     }
 }

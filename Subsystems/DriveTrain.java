@@ -238,64 +238,9 @@ public class DriveTrain {
         frontRight.setPower(-FrontRightVal);
         backLeft.setPower(BackLeftVal);
         backRight.setPower(-BackRightVal);
-
-        realTelemetry.addData("FrontLeftVal", FrontLeftVal);
-
     }
 
-
-    public void simpleMove(double timeOne, double timeTwo, double power, double startTime, double direction) {
-
-        setBreakMode(true);
-
-        if (direction == FORWARD) {
-
-            while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
-
-                frontLeft.setPower(-power);
-                backLeft.setPower(-power);
-
-                frontRight.setPower(power);
-                backRight.setPower(power);
-            }
-            stopMotors();
-        } else if (direction == BACKWARD) {
-
-            while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
-
-                frontLeft.setPower(power);
-                backLeft.setPower(power);
-
-                frontRight.setPower(-power);
-                backRight.setPower(-power);
-            }
-            stopMotors();
-        } else if (direction == STRAFE_LEFT) {
-
-            while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
-
-                frontLeft.setPower(power);
-                backLeft.setPower(-power);
-
-                frontRight.setPower(power);
-                backRight.setPower(-power);
-            }
-            stopMotors();
-        } else if (direction == STRAFE_RIGHT) {
-
-            while (l.getRuntime() - startTime >= timeOne && l.getRuntime() - startTime <= timeTwo && l.opModeIsActive()) {
-
-                frontLeft.setPower(-power);
-                backLeft.setPower(power);
-
-                frontRight.setPower(-power);
-                backRight.setPower(power);
-            }
-            stopMotors();
-        }
-    }
-
-    public void encoderDrive(double inches, double power, Direction direction) {
+    public void driveByEncoder(double inches, double power, Direction direction) {
 
         int newFrontLeftTarget;
         int newBackLeftTarget;
@@ -328,7 +273,8 @@ public class DriveTrain {
             backRight.setTargetPosition(newBackRightTarget);
 
             while (frontLeft.isBusy() || backLeft.isBusy()
-                    || frontRight.isBusy() || backRight.isBusy()) {
+                    || frontRight.isBusy() || backRight.isBusy()
+                    && l.opModeIsActive() && !l.isStopRequested()) {
 
                 realTelemetry.addData("Current Function", "Encoder Forward");
 
@@ -363,7 +309,8 @@ public class DriveTrain {
             backRight.setTargetPosition(newBackRightTarget);
 
             while (frontLeft.isBusy() || backLeft.isBusy()
-                    || frontRight.isBusy() || backRight.isBusy()) {
+                    || frontRight.isBusy() || backRight.isBusy()
+                    && l.opModeIsActive() && !l.isStopRequested()) {
 
                 realTelemetry.addData("Current Function", "Encoder Backwards");
 
@@ -398,7 +345,8 @@ public class DriveTrain {
             backRight.setTargetPosition(newBackRightTarget);
 
             while (frontLeft.isBusy() || backLeft.isBusy()
-                    || frontRight.isBusy() || backRight.isBusy()) {
+                    || frontRight.isBusy() || backRight.isBusy()
+                    && l.opModeIsActive() && !l.isStopRequested()) {
 
                 realTelemetry.addData("Current Function", "Encoder Strafe Left");
 
@@ -433,7 +381,8 @@ public class DriveTrain {
             backRight.setTargetPosition(newBackRightTarget);
 
             while (frontLeft.isBusy() || backLeft.isBusy()
-                    || frontRight.isBusy() || backRight.isBusy()) {
+                    || frontRight.isBusy() || backRight.isBusy()
+                    && l.opModeIsActive() && !l.isStopRequested()) {
 
                 realTelemetry.addData("Current Function", "Encoder Strafe Right");
 
