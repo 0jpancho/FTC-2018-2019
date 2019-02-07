@@ -29,11 +29,6 @@ public class DriveTrain {
     public double vA, vB, vC, vD;
     public double r;
 
-    public static double FORWARD = 0;
-    public static double BACKWARD = 1;
-    public static double STRAFE_LEFT = 2;
-    public static double STRAFE_RIGHT = 3;
-
     public final double wheelDiameter = 4;
 
     public final double ppr = 1120;
@@ -106,6 +101,28 @@ public class DriveTrain {
         l.idle();
     }
 
+    public void simpleRotate(double inputX) {
+
+        setBreakMode(false);
+
+        if (l.gamepad1.right_stick_x < 0) {
+            frontLeft.setPower(-inputX);
+            frontRight.setPower(-inputX);
+
+            backRight.setPower(-inputX);
+            backLeft.setPower(-inputX);
+        } else if (l.gamepad1.right_stick_x > 0) {
+            frontLeft.setPower(-inputX);
+            frontRight.setPower(-inputX);
+
+            backRight.setPower(-inputX);
+            backLeft.setPower(-inputX);
+        }
+
+        //realTelemetry.addData("DriveTrain Status", "Rotating DriveTrain");
+        realTelemetry.update();
+    }
+
     public void simpleMecanumTeleop(double leftInputX, double rightInputX, double inputY) {
 
         setBreakMode(false);
@@ -135,7 +152,7 @@ public class DriveTrain {
             backRight.setPower(leftInputX);
         } else if (l.gamepad1.left_stick_x > 0) {
 
-            frontLeft.setPower(-leftInputX);
+            frontLeft.setPower( -leftInputX);
             backLeft.setPower(leftInputX);
 
             frontRight.setPower(-leftInputX);
@@ -163,34 +180,12 @@ public class DriveTrain {
         }
     }
 
-    public void simpleRotate(double inputX) {
-
-        setBreakMode(false);
-
-        if (l.gamepad1.right_stick_x < 0) {
-            frontLeft.setPower(-inputX);
-            frontRight.setPower(-inputX);
-
-            backRight.setPower(-inputX);
-            backLeft.setPower(-inputX);
-        } else if (l.gamepad1.right_stick_x > 0) {
-            frontLeft.setPower(-inputX);
-            frontRight.setPower(-inputX);
-
-            backRight.setPower(-inputX);
-            backLeft.setPower(-inputX);
-        }
-
-        //realTelemetry.addData("DriveTrain Status", "Rotating DriveTrain");
-        realTelemetry.update();
-    }
-
     public void advMecanumTeleop(double inputX, double inputY) {
         x = inputX;
         y = inputY;
         r = Math.sqrt(x * x + y * y);
 
-        theta = (Math.atan2(y, x) * (180 / Math.PI));
+        theta = (Math.atan2(y, x) * (180 / Math.PI)); 
 
         vA = (Math.cos((theta - 45) * (Math.PI / 180)) * r) * l.gamepad1.right_stick_y;
         vB = (Math.cos((theta + 45) * (Math.PI / 180)) * r) * l.gamepad1.right_stick_y;

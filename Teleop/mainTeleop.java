@@ -11,26 +11,33 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp (name = "mainTeleop")
 public class mainTeleop extends LinearOpMode {
 
-    DriveTrain driveTrain;
-    Hanger hanger;
-    Arm arm;
-    Intake intake;
+    DriveTrain m_DriveTrain;
+    Hanger m_Hanger;
+    Arm m_Arm;
+    Intake m_Intake;
+
 
     @Override
     public void runOpMode() {
 
-            driveTrain = new DriveTrain(this, hardwareMap, telemetry);
-            hanger = new Hanger(this, hardwareMap, telemetry);
-            arm = new Arm(this, hardwareMap, telemetry);
-            intake = new Intake(this, hardwareMap, telemetry);
+            m_DriveTrain = new DriveTrain(this, hardwareMap, telemetry);
+            m_Hanger = new Hanger(this, hardwareMap, telemetry);
+            m_Arm = new Arm(this, hardwareMap, telemetry);
+            m_Intake = new Intake(this, hardwareMap, telemetry);
 
             waitForStart();
 
             while (opModeIsActive() && !isStopRequested()) {
 
-                driveTrain.mainMecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-                arm.PivotByJoystick(gamepad2.left_stick_y, 0.5);
-                hanger.moveHanger(gamepad2.right_stick_y, 0.675);
+                m_DriveTrain.mainMecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+                m_Hanger.moveHanger(gamepad2.right_stick_y, 0.675);
+
+                m_Arm.pivotByJoystick(gamepad2.left_stick_y, 0.3);
+                m_Arm.extendByButton();
+
+                m_Intake.moveGrabbers();
+                m_Intake.moveWrist(gamepad2.dpad_up, gamepad2.dpad_down);
 
                 telemetry.update();
             }

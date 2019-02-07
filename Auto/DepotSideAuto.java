@@ -12,8 +12,8 @@ public class DepotSideAuto extends LinearOpMode {
     DriveTrain m_DriveTrain;
     Hanger m_Hanger;
 
-    double UP = 0;
-    double DOWN = 1;
+    double DOWN = 0;
+    double UP = 1;
 
     public void runOpMode(){
 
@@ -37,7 +37,11 @@ public class DepotSideAuto extends LinearOpMode {
 
             m_DriveTrain.driveByEncoder(3, 1, DriveTrain.Direction.FORWARD);
 
-            m_DriveTrain.driveByEncoder(32, 1, DriveTrain.Direction.STRAFE_RIGHT);
+            m_DriveTrain.driveByEncoder(12, 1, DriveTrain.Direction.STRAFE_RIGHT);
+
+            m_DriveTrain.driveByEncoder(12, 1, DriveTrain.Direction.STRAFE_LEFT);
+
+            m_DriveTrain.driveByEncoder(20, 1, DriveTrain.Direction.FORWARD);
 
             m_DriveTrain.rotateLeftByGyro(45, 0.33);
 
@@ -45,13 +49,9 @@ public class DepotSideAuto extends LinearOpMode {
 
             m_DriveTrain.driveByEncoder(4, 1, DriveTrain.Direction.STRAFE_LEFT );
 
-            m_DriveTrain.driveByEncoder(80, 1, DriveTrain.Direction.FORWARD);
-
+            m_DriveTrain.driveByEncoder(72, 1, DriveTrain.Direction.FORWARD);
 
             break;
-
         }
-
-
     }
 }

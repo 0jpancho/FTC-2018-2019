@@ -54,6 +54,7 @@ public class Hanger {
         l.idle();
     }
 
+
     public void moveHanger (double inputY, double multiplier){
     
         setRunMode(RUN_USING_ENCODER);

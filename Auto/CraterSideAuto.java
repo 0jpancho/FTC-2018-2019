@@ -17,8 +17,8 @@ public class CraterSideAuto extends LinearOpMode {
         m_DriveTrain = new DriveTrain(this, hardwareMap, telemetry);
         m_Hanger = new Hanger(this, hardwareMap, telemetry);
 
-        double UP = 0;
-        double DOWN = 1;
+        double DOWN = 0;
+        double UP = 1;
 
 
         waitForStart();

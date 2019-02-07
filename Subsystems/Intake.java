@@ -4,37 +4,80 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake {
 
-    CRServo intake;
+    CRServo intakeLeft, intakeRight;
+    Servo leftGrabber, rightGrabber;
 
     LinearOpMode l;
     Telemetry realTelemetry;
+
+    boolean leftToggle = false;
+    boolean rightToggle = false;
 
     public Intake(LinearOpMode opMode, HardwareMap hardwareMap, Telemetry telemetry){
 
         l = opMode;
         realTelemetry = telemetry;
 
-        //intake = hardwareMap.crservo.get("intake");
+       intakeLeft = hardwareMap.crservo.get("intakeLeft");
+       intakeRight = hardwareMap.crservo.get("intakeRight");
+
+       leftGrabber = hardwareMap.servo.get("leftGrabber");
+       rightGrabber = hardwareMap.servo.get("rightGrabber");
     }
 
-    public void moveByButton(boolean up, boolean down){
+    public void moveWrist(boolean up, boolean down){
 
         if (up){
-            intake.setPower(1);
+            intakeLeft.setPower(1);
+            intakeRight.setPower(-1);
         }
 
         else if (down){
-            intake.setPower(-1);
+            intakeLeft.setPower(-1);
+            intakeRight.setPower(1);
         }
 
         else {
-            intake.setPower(0);
+            intakeLeft.setPower(0);
+            intakeRight.setPower(0);
+        }
+    }
+
+
+    public void moveGrabbers(){
+        if (l.gamepad2.left_bumper && leftToggle){
+
+            if (leftGrabber.getPosition() == 0.75){
+                leftGrabber.setPosition(0);
+            }
+
+            else if (leftGrabber.getPosition() == 0){
+                leftGrabber.setPosition(0.75);
+            }
+            leftToggle = true;
+        }
+        else if (!l.gamepad2.left_bumper){
+            leftToggle = false;
         }
 
+        if (l.gamepad2.right_bumper && rightToggle){
+
+            if (rightGrabber.getPosition() == 1){
+                rightGrabber.setPosition(0.25);
+            }
+            else if (leftGrabber.getPosition() == 0.25){
+                rightGrabber.setPosition(1);
+            }
+            rightToggle = true;
+        }
+        else if (!l.gamepad2.right_bumper){
+            rightToggle = false;
+        }
     }
 }

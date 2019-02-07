@@ -27,8 +27,11 @@ public class CraterVision extends LinearOpMode {
         vision.init();// enables the camera overlay. this will take a couple of seconds
         vision.enable();// enables the tracking algorithms. this might also take a little time
 
-        DriveTrain driveTrain = new DriveTrain(CraterVision.this, hardwareMap, telemetry);
-        Hanger hanger = new Hanger(CraterVision.this, hardwareMap, telemetry);
+        DriveTrain m_DriveTrain = new DriveTrain(CraterVision.this, hardwareMap, telemetry);
+        Hanger m_Hanger = new Hanger(CraterVision.this, hardwareMap, telemetry);
+
+        double DOWN = 0;
+        double UP = 1;
 
         waitForStart();
 
@@ -39,21 +42,20 @@ public class CraterVision extends LinearOpMode {
 
             vision.disable();
 
+            m_Hanger.moveByTimer(0.75 , 1, DOWN);
+
+            m_DriveTrain.driveByEncoder(6  , 1, DriveTrain.Direction.BACKWARD);
+
+            m_DriveTrain.driveByEncoder(8, 1, DriveTrain.Direction.STRAFE_RIGHT);
+
+            m_DriveTrain.driveByEncoder(4, 1, DriveTrain.Direction.FORWARD);
 
             //Come down from Lander
-            hanger.moveByEncoder(24, 0.25, Hanger.DOWN);
-
-            //Reposition from hook
-            driveTrain.driveByEncoder(6, 1, DriveTrain.Direction.BACKWARD);
-            driveTrain.driveByEncoder(6,1, DriveTrain.Direction.STRAFE_LEFT);
-            driveTrain.driveByEncoder(6, 1, DriveTrain.Direction.FORWARD);
 
             visionTelemetry();
 
             if (goldPosition == SampleRandomizedPositions.LEFT){
 
-                driveTrain.driveByEncoder(13.5, 1, DriveTrain.Direction.BACKWARD);
-                driveTrain.driveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -64,13 +66,15 @@ public class CraterVision extends LinearOpMode {
             {
                 visionTelemetry();
 
-                driveTrain.driveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                m_DriveTrain.driveByEncoder(20, 1, DriveTrain.Direction.STRAFE_RIGHT);
+
                 break;
+
             }
 
             else if (goldPosition == SampleRandomizedPositions.RIGHT) {
-                driveTrain.driveByEncoder(13.5, 1, DriveTrain.Direction.FORWARD);
-                driveTrain.driveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
+                //driveTrain.driveByEncoder(13.5, 1, DriveTrain.Direction.FORWARD);
+                //driveTrain.driveByEncoder(24,1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
 
@@ -79,7 +83,7 @@ public class CraterVision extends LinearOpMode {
 
             else if (goldPosition == SampleRandomizedPositions.UNKNOWN) {
 
-                driveTrain.driveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
+                //driveTrain.driveByEncoder(24, 1, DriveTrain.Direction.STRAFE_LEFT);
 
                 visionTelemetry();
             }
@@ -90,7 +94,7 @@ public class CraterVision extends LinearOpMode {
         vision.shutdown();
     }
 
-    public void visionTelemetry(){
+    public void  visionTelemetry(){
         telemetry.addData("Current Mineral Pos", goldPosition);
 
         telemetry.update();

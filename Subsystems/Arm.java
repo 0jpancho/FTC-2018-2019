@@ -11,9 +11,6 @@ public class  Arm {
 
     public DcMotor armPivot, armExtend;
 
-    DcMotorEx test;
-
-
     public LinearOpMode l;
     public Telemetry realTelemetry;
 
@@ -24,11 +21,15 @@ public class  Arm {
 
         armPivot = hardwareMap.dcMotor.get("armPivot");
         armPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        armExtend = hardwareMap.dcMotor.get("armExtend");
+        armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
-    public void PivotByJoystick(double inputY, double multiplier){
+    public void pivotByJoystick(double inputY, double multiplier){
 
         armPivot.setPower(inputY * multiplier);
 
@@ -41,8 +42,14 @@ public class  Arm {
          */
     }
 
-    public void extendByJoystick(double inputY, double multiplier){
+    public void extendByButton() {
 
-        armExtend.setPower(inputY * multiplier);
+        if (l.gamepad2.y) {
+            armExtend.setPower(0.75);
+        } else if (l.gamepad2.a) {
+            armExtend.setPower(-0.75);
+        }
+        armExtend.setPower(0);
+
     }
 }
