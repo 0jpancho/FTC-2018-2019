@@ -31,6 +31,7 @@ public class Intake {
        rightGrabber = hardwareMap.servo.get("rightGrabber");
     }
 
+    //Controls the angle of the wrist
     public void moveWrist(boolean up, boolean down){
 
         if (up){
@@ -49,9 +50,9 @@ public class Intake {
         }
     }
 
-
+    //Toggles pinball grabbers. State is retained even if the button is pressed
     public void moveGrabbers(){
-        if (l.gamepad2.left_bumper && leftToggle){
+        if (l.gamepad2.left_bumper && !leftToggle){
 
             if (leftGrabber.getPosition() == 0.75){
                 leftGrabber.setPosition(0);
@@ -66,7 +67,7 @@ public class Intake {
             leftToggle = false;
         }
 
-        if (l.gamepad2.right_bumper && rightToggle){
+        if (l.gamepad2.right_bumper && !rightToggle){
 
             if (rightGrabber.getPosition() == 1){
                 rightGrabber.setPosition(0.25);

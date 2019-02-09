@@ -10,12 +10,13 @@ import org.firstinspires.ftc.teamcode.Subsystems.Hanger;
 @Autonomous(name = "Backup Drive Forward")
 public class BackupDriveForward extends LinearOpMode{
 
-
+    //Declare subsystems
     DriveTrain m_DriveTrain;
     Hanger m_Hanger;
 
     public void runOpMode(){
 
+        //Initialize Subsystems
         m_DriveTrain = new DriveTrain(this, hardwareMap, telemetry);
         m_Hanger = new Hanger(this, hardwareMap, telemetry);
 
@@ -23,6 +24,7 @@ public class BackupDriveForward extends LinearOpMode{
 
         while (opModeIsActive() && !isStopRequested()){
 
+            //Strafe Left into crater
             m_DriveTrain.driveByEncoder(28, 1, DriveTrain.Direction.STRAFE_RIGHT);
         }
     }

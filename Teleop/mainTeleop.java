@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp (name = "mainTeleop")
 public class mainTeleop extends LinearOpMode {
 
+    //Declare subsystems
     DriveTrain m_DriveTrain;
     Hanger m_Hanger;
     Arm m_Arm;
@@ -20,12 +21,14 @@ public class mainTeleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+            //Initialize subsystems
             m_DriveTrain = new DriveTrain(this, hardwareMap, telemetry);
             m_Hanger = new Hanger(this, hardwareMap, telemetry);
             m_Arm = new Arm(this, hardwareMap, telemetry);
             m_Intake = new Intake(this, hardwareMap, telemetry);
 
             waitForStart();
+
 
             while (opModeIsActive() && !isStopRequested()) {
 

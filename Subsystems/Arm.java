@@ -32,14 +32,6 @@ public class  Arm {
     public void pivotByJoystick(double inputY, double multiplier){
 
         armPivot.setPower(inputY * multiplier);
-
-        /*
-        final int lastPos = arm.getCurrentPosition();
-
-        arm.setTargetPosition((int)(inputY / 5040) - 5040);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(0.1);
-         */
     }
 
     public void extendByButton() {

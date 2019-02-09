@@ -21,14 +21,6 @@ import java.util.Locale;
 
 public class DriveTrain {
 
-    public double theta;
-
-    public double x = 0;
-    public double y = 0;
-
-    public double vA, vB, vC, vD;
-    public double r;
-
     public final double wheelDiameter = 4;
 
     public final double ppr = 1120;
@@ -101,120 +93,11 @@ public class DriveTrain {
         l.idle();
     }
 
-    public void simpleRotate(double inputX) {
-
-        setBreakMode(false);
-
-        if (l.gamepad1.right_stick_x < 0) {
-            frontLeft.setPower(-inputX);
-            frontRight.setPower(-inputX);
-
-            backRight.setPower(-inputX);
-            backLeft.setPower(-inputX);
-        } else if (l.gamepad1.right_stick_x > 0) {
-            frontLeft.setPower(-inputX);
-            frontRight.setPower(-inputX);
-
-            backRight.setPower(-inputX);
-            backLeft.setPower(-inputX);
-        }
-
-        //realTelemetry.addData("DriveTrain Status", "Rotating DriveTrain");
-        realTelemetry.update();
-    }
-
-    public void simpleMecanumTeleop(double leftInputX, double rightInputX, double inputY) {
-
-        setBreakMode(false);
-        setMotorRunMode(RUN_USING_ENCODER);
-
-        if (l.gamepad1.left_stick_y < 0) {
-
-            frontLeft.setPower(-inputY);
-            backLeft.setPower(-inputY);
-
-            frontRight.setPower(inputY);
-            backRight.setPower(inputY);
-
-        } else if (l.gamepad1.left_stick_y > 0) {
-
-            frontLeft.setPower(-inputY);
-            backLeft.setPower(-inputY);
-
-            frontRight.setPower(inputY);
-            backRight.setPower(inputY);
-        } else if (l.gamepad1.left_stick_x < 0) {
-
-            frontLeft.setPower(-leftInputX);
-            backLeft.setPower(leftInputX);
-
-            frontRight.setPower(-leftInputX);
-            backRight.setPower(leftInputX);
-        } else if (l.gamepad1.left_stick_x > 0) {
-
-            frontLeft.setPower( -leftInputX);
-            backLeft.setPower(leftInputX);
-
-            frontRight.setPower(-leftInputX);
-            backRight.setPower(leftInputX);
-        }
-
-        else if (l.gamepad1.right_stick_x < 0) {
-            frontLeft.setPower(-rightInputX);
-            frontRight.setPower(-rightInputX);
-
-            backRight.setPower(-rightInputX);
-            backLeft.setPower(-rightInputX);
-        }
-
-        else if (l.gamepad1.right_stick_x > 0) {
-            frontLeft.setPower(-rightInputX);
-            frontRight.setPower(-rightInputX);
-
-            backRight.setPower(-rightInputX);
-            backLeft.setPower(-rightInputX);
-        }
-
-        else {
-            stopMotors();
-        }
-    }
-
-    public void advMecanumTeleop(double inputX, double inputY) {
-        x = inputX;
-        y = inputY;
-        r = Math.sqrt(x * x + y * y);
-
-        theta = (Math.atan2(y, x) * (180 / Math.PI)); 
-
-        vA = (Math.cos((theta - 45) * (Math.PI / 180)) * r) * l.gamepad1.right_stick_y;
-        vB = (Math.cos((theta + 45) * (Math.PI / 180)) * r) * l.gamepad1.right_stick_y;
-        vC = -vA;
-        vD = -vB;
-
-        frontLeft.setPower(vA);
-        frontRight.setPower(vB);
-
-        backRight.setPower(vC);
-        backLeft.setPower(vD);
-
-        realTelemetry.addData("vA", vA);
-        realTelemetry.addData("vB", vB);
-        realTelemetry.addData("vC", vC);
-        realTelemetry.addData("vD", vD);
-
-        realTelemetry.addData("X", inputX);
-        realTelemetry.addData("Y", inputY);
-
-        //realTelemetry.addData("DriveTrain Status", "Set Motors");
-
-        realTelemetry.update();
-    }
-
     public void mainMecanumDrive(double leftStickY, double leftStickX, double rightStickX) {
 
         setMotorRunMode(RUN_USING_ENCODER);
 
+        //Sets motor values based on adding and subtracting joystick values
         double FrontLeftVal = leftStickY - (leftStickX) + -rightStickX;
         double FrontRightVal = leftStickY + (leftStickX) - -rightStickX;
         double BackLeftVal = leftStickY + (leftStickX) + -rightStickX;
@@ -235,6 +118,7 @@ public class DriveTrain {
         backRight.setPower(-BackRightVal);
     }
 
+    //Drive function that uses encoders to move a specific distance
     public void driveByEncoder(double inches, double power, Direction direction) {
 
         int newFrontLeftTarget;
@@ -243,30 +127,35 @@ public class DriveTrain {
         int newFrontRightTarget;
         int newBackRightTarget;
 
+        //Constant for mitigating distance loss on mecanum strafe
         double encoderStrafeMultiplier = Math.sqrt(2);
 
         setMotorRunMode(RUN_TO_POSITION);
 
         if (direction == Direction.FORWARD) {
 
+            //Computes the target distance for each motor
             newFrontLeftTarget = frontLeft.getCurrentPosition() - (int) (inches * countsPerInch);
             newBackLeftTarget = backLeft.getCurrentPosition() - (int) (inches * countsPerInch);
 
             newFrontRightTarget = frontRight.getCurrentPosition() + (int) (inches * countsPerInch);
             newBackRightTarget = backRight.getCurrentPosition() + (int) (inches * countsPerInch);
 
+            //Sets the motor power based on input
             frontLeft.setPower(-power);
             backLeft.setPower(-power);
 
             frontRight.setPower(power);
             backRight.setPower(power);
 
+            //Sets the target position for each motor
             frontLeft.setTargetPosition(newFrontLeftTarget);
             backLeft.setTargetPosition(newBackLeftTarget);
 
             frontRight.setTargetPosition(newFrontRightTarget);
             backRight.setTargetPosition(newBackRightTarget);
 
+            //Telemetry for encoder position
             while (frontLeft.isBusy() || backLeft.isBusy()
                     || frontRight.isBusy() || backRight.isBusy()
                     && l.opModeIsActive() && !l.isStopRequested()) {
